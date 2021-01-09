@@ -15,6 +15,21 @@
 and removed 等效 表示删除安装包
 3. enablerepo：指定安装软件所用临时源，可选项。
 4. disablerepo：用于指定安装软件包是临时启用的yum源。可选项
+安装多个软件包
+- name: install package
+  hosts: all
+  tasks:
+  - name: install php and mariaDB
+    yum:
+      name:
+      - php
+      - mariadb
+      state: present
+    when: ansible_hostname in groups['dev']  
+```
+
+
+
 - #### 2. yum_repository：
 ```
 - name: Add the docker-ce yum repository
@@ -36,6 +51,7 @@ and removed 等效 表示删除安装包
 6. gpgcheck参数：此参数用于设置是否开启 rpm 包验证功能，默认值为 no，表示不启用包验证，设置为 yes 表示开启包验证功能。
 7. enabled参数：此参数用于设置是否激活对应的 yum 源，此参数默认值为 yes，表示启用对应的 yum 源，设置为 no 表示不启用对应的 yum 源。
 8. state参数：默认值为 present，当值设置为 absent 时，表示删除对应的 yum 源。
+```
 
 - #### file：
   file 模块可以帮助我们完成一些对文件的基本操作。比如，创建文件或目录、删除文件或目录、修改文件权限等。
