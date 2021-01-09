@@ -16,6 +16,7 @@ and removed 等效 表示删除安装包
 3. enablerepo：指定安装软件所用临时源，可选项。
 4. disablerepo：用于指定安装软件包是临时启用的yum源。可选项
 安装多个软件包
+```
 - name: install package
   hosts: all
   tasks:
@@ -27,9 +28,6 @@ and removed 等效 表示删除安装包
       state: present
     when: ansible_hostname in groups['dev']  
 ```
-
-
-
 - #### 2. yum_repository：
 ```
 - name: Add the docker-ce yum repository
