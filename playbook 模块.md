@@ -63,7 +63,7 @@ and removed 等效 表示删除安装包
 ```
 1. 当我们想要创建的 /etc/docker是一个目录时，需要将state的值设置为directory，”directory”为目录之意。
 2. ，当我们想要操作的/etc/docker是一个文件时，则需要将state的值设置为touch
-- #### 3. service：
+- #### 4. service：
 ```
 - name:systemctl stop/disable firewalld
   service:
@@ -75,3 +75,20 @@ and removed 等效 表示删除安装包
 2. name: 表示要控制哪一个服务
 3. state: 此参数用于指定服务的状态，比如，我们想要启动远程主机中的 nginx，则可以将 state 的值设置为 started；如果想要停止远程主机中的服务，则可以将 state 的值设置为 stopped。此参数的可用值有 started、stopped、restarted、reloaded。 
 4 arguments:表示向命令行传递的参数
+
+- #### 5. template：
+  ```
+  - name: Create jenkins master compose file
+  template:
+    src:  docker-compose.yml.j2
+    dest: /data/docker-compose/jenkins/docker-compose.yml
+
+  ```
+| 参数名 | 是否必须 | 默认值 | 选项   | 说明                                                       |
+| ------ | :------- | ----- | ------ | ---------------------------------------------------------- |
+| backup | no     | no     | yes/no | 建立个包括timestamp在内的文件备份，以备不时之需            |
+| dest   | yes      |        |        | 远程节点上的绝对路径，用于放置template文件。               |
+| group  | no       |        |        | 设置远程节点上的的template文件的所属用户组                 |
+| mode   | no       |        |        | 设置远程节点上的template文件权限。类似Linux中*chmod*的用法 |
+| owner  | no       |        |        | 设置远程节点上的template文件所属用户                       |
+| src    | yes      |        |        | 本地Jinjia2模版的template文件位置。                        |
