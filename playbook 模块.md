@@ -60,10 +60,33 @@ and removed 等效 表示删除安装包
   file:
     path: /etc/docker
     state: directory
+    mode: "0755"
+    owner: jenkins
+    group: jenkins
 ```
 1. 当我们想要创建的 /etc/docker是一个目录时，需要将state的值设置为directory，”directory”为目录之意。
 2. ，当我们想要操作的/etc/docker是一个文件时，则需要将state的值设置为touch
-- #### 4. service：
+3. mode,owner,group分别指所创建的文本或目录的权限，用户主，用户组。
+
+
+- #### 4. copy：
+```
+- name: Copy maven .m2/settings.xml settings
+  copy:
+    src: settings.xml
+    dest: /home/jenkins/.m2/settings.xml
+    mode: "0644"
+    owner: jenkins
+    group: jenkins
+  ```
+1. src:将本地路径复制到远程服务器; 可以是绝对路径或相对的。如果是一个目录，它将被递归地复制。如果路径以/结尾，则只有该目录下内容被复制到目的地，如果没有使用/来结尾，则包含目录在内的整个内容全部复制
+2. dest:目标绝对路径。如果src是一个目录，dest也必须是一个目录。如果dest是不存在的路径，并且如果dest以/结尾或者src是目录，则dest被创建。如果src和dest是文件，如果dest的父目录不存在，任务将失败
+3. mode,owner,group分别指所创建的文本或目录的权限，用户主，用户组。
+4. backup ：在覆盖之前将原文件备份，备份文件包含时间信息
+   
+
+
+- #### 5. service：
 ```
 - name:systemctl stop/disable firewalld
   service:
@@ -76,7 +99,7 @@ and removed 等效 表示删除安装包
 3. state: 此参数用于指定服务的状态，比如，我们想要启动远程主机中的 nginx，则可以将 state 的值设置为 started；如果想要停止远程主机中的服务，则可以将 state 的值设置为 stopped。此参数的可用值有 started、stopped、restarted、reloaded。 
 4 arguments:表示向命令行传递的参数
 
-- #### 5. template：
+- #### 6. template：
   ```
   - name: Create jenkins master compose file
   template:
