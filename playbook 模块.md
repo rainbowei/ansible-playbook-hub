@@ -15,7 +15,8 @@
 and removed 等效 表示删除安装包
 3. enablerepo：指定安装软件所用临时源，可选项。
 4. disablerepo：用于指定安装软件包是临时启用的yum源。可选项
-安装多个软件包
+  
+5. 安装多个软件包
 ```
 - name: install package
   hosts: all
@@ -62,4 +63,15 @@ and removed 等效 表示删除安装包
 ```
 1. 当我们想要创建的 /etc/docker是一个目录时，需要将state的值设置为directory，”directory”为目录之意。
 2. ，当我们想要操作的/etc/docker是一个文件时，则需要将state的值设置为touch
-3. 
+- #### 3. service：
+```
+- name:systemctl stop/disable firewalld
+  service:
+    name: firewalld
+    enable: no
+    state: stopped
+```
+1. enabled: 此参数用于指定是否将服务设置为开机 启动项，设置为 yes 表示将对应服务设置为开机启动，设置为 no 表示不会开机启动。
+2. name: 表示要控制哪一个服务
+3. state: 此参数用于指定服务的状态，比如，我们想要启动远程主机中的 nginx，则可以将 state 的值设置为 started；如果想要停止远程主机中的服务，则可以将 state 的值设置为 stopped。此参数的可用值有 started、stopped、restarted、reloaded。 
+4 arguments:表示向命令行传递的参数
