@@ -131,3 +131,106 @@ and removed 等效 表示删除安装包
 ```
 1. state：state=present修改,state=absent 删除.
 2. reload ：reload=yes 重载 sysctl.conf 文件
+- #### 8. user：
+  ```
+- name: Create the nginx user
+  user:
+    name: nginx
+    uid: '1012'
+    shell: /sbin/nologin
+    create_home: no
+   ```
+* home：指定用户的家目录，需要与createhome配合使用
+* groups：指定用户的属组
+* uid：指定用的uid
+* password：指定用户的密码
+* name：指定用户名
+* createhome：是否创建家目录 yes|no
+* system：是否为系统用户
+* remove：当state=absent时，remove=yes则表示连同家目录一起删除，等价于userdel -r
+* state：是创建还是删除
+* shell：指定用户的shell环境 
+- #### 9.synchronize ：
+```
+- name: synchronize nginx lua config to /usr/local/openresty/nginx/lua
+  synchronize:
+    src: "{{ role_path }}/files/nginx/lua/"
+    dest: /usr/local/openresty/nginx/lua
+    delete: yes
+    recursive: yes
+    links: yes
+  notify:
+  - reload openresty
+```
+ 要使用rsync模块，系统必须按照rsync包
+* archive: 归档，相当于同时开启recursive(递归)、links、perms、times、owner、group、-D选项都为yes ，默认该项为开启
+
+* checksum: 跳过检测sum值，默认关闭
+
+* compress:是否开启压缩
+
+* copy_links：复制链接文件，默认为no ，注意后面还有一个links参数
+
+* delete: 删除不存在的文件，默认no
+
+* dest：目录路径
+
+* dest_port：默认目录主机上的端口 ，默认是22，走的ssh协议
+
+* dirs：传速目录不进行递归，默认为no，即进行目录递归
+
+* rsync_opts：rsync参数部分
+
+* set_remote_user：主要用于/etc/ansible/hosts中定义或默认使用的用户与rsync使用的用户不同的情况
+
+* mode: push或pull 模块，push模的话，一般用于从本机向远程主机上传文件，pull 模式用于从远程主机上取文
+- #### 10.parted
+```
+- name: Create a new primary partition
+  parted:
+    device: /dev/vdb
+    number: 1
+    label: gpt
+    state: present
+
+```
+- 常用参数：
+    * device:      ##分盘的设备
+    * number:      ##第几块分区
+    * part_start:  ##分区起始点
+    * part_end:    ##分区结束点，即分区大小
+    * state:       ##present建立分区，absent删除分区
+    * unit:        ##默认的分区大小单位，Choices: s, B, KB, KiB, MB, MiB, GB, GiB, TB, TiB, %, cyl,chs, compact
+    * label        ##设置盘符的标签，Choices: aix, amiga, bsd, dvh, gpt, loop, mac, msdos, pc98, sun
+- #### 11.filesystem
+  ```
+  - name: Create a xfs filesystem on /dev/vdb1
+  filesystem:
+    fstype: xfs
+    dev: /dev/vdb1
+    opts: '-n ftype=1'
+  ```
+  - 常用参数：
+	fstype: 设置文件类型，(Aliases: type)(Choices: btrfs, ext2, ext3, ext4, ext4dev,f2fs, lvm, ocfs2, reiserfs, xfs, vfat, swap)
+    dev :选择修改的硬盘文件
+
+- #### 12.mount
+  ```
+  - name: Mount /dev/vdb1 to /data
+  mount:
+    path: /data
+    src: /dev/vdb1
+    fstype: xfs
+    opts: 'defaults,noatime'
+    state: mounted
+    ```
+- 常用参数：
+  backup：	  备份挂载目录的原有文件
+  fstab :     永久挂载到的位置
+  fstype:     挂载的硬盘类型
+  path:        挂载点
+  src:        挂载的文件
+  state:      present挂载，absent解除挂载
+  opts:       挂载参数( 如 ro,noauto)
+
+  
