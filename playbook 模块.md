@@ -115,3 +115,19 @@ and removed 等效 表示删除安装包
 | mode   | no       |        |        | 设置远程节点上的template文件权限。类似Linux中*chmod*的用法 |
 | owner  | no       |        |        | 设置远程节点上的template文件所属用户                       |
 | src    | yes      |        |        | 本地Jinjia2模版的template文件位置。                        |
+
+- #### 7. sysctl：
+```
+# 将桥接的IPv4流量传递到iptables的链
+  - name: Disable swappiness and pass bridged IPv4 traffic to iptable's chains
+    sysctl:
+      name: "{{ item.name }}"
+      value: "{{ item.value }}"
+      state: present
+    with_items:
+      - { name: 'vm.swappiness', value: '0' }
+      - { name: 'net.bridge.bridge-nf-call-iptables', value: '1' }
+      - { name: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }
+```
+1. state：state=present修改,state=absent 删除.
+2. reload ：reload=yes 重载 sysctl.conf 文件
