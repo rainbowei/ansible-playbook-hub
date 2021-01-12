@@ -242,7 +242,8 @@ and removed 等效 表示删除安装包
     state: present
     key: "{{ lookup('file','glops_id_rsa.pub') }}"
     ```
-    新增公钥内容到服务器用户家目录的.ssh目录的authorized_keys文件 没有则创建authorized_keys文件 state: (1) present 添加 (2) absent 删除
+  新增公钥内容到服务器用户家目录的.ssh目录的authorized_keys文件没有则创建authorized_keys文件 
+  state: (1) present 添加 (2) absent 删除
 ```
 * 例子： 创建ops用户，赋予sudo权限。并免登录。  
 ```
