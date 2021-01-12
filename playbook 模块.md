@@ -184,7 +184,7 @@ and removed 等效 表示删除安装包
 * set_remote_user：主要用于/etc/ansible/hosts中定义或默认使用的用户与rsync使用的用户不同的情况
 
 * mode: push或pull 模块，push模的话，一般用于从本机向远程主机上传文件，pull 模式用于从远程主机上取文
-- #### 10.parted
+- #### 10.parted:
 ```
 - name: Create a new primary partition
   parted:
@@ -202,7 +202,7 @@ and removed 等效 表示删除安装包
     * state:       ##present建立分区，absent删除分区
     * unit:        ##默认的分区大小单位，Choices: s, B, KB, KiB, MB, MiB, GB, GiB, TB, TiB, %, cyl,chs, compact
     * label        ##设置盘符的标签，Choices: aix, amiga, bsd, dvh, gpt, loop, mac, msdos, pc98, sun
-- #### 11.filesystem
+- #### 11.filesystem:
   ```
   - name: Create a xfs filesystem on /dev/vdb1
   filesystem:
@@ -214,7 +214,7 @@ and removed 等效 表示删除安装包
 	fstype: 设置文件类型，(Aliases: type)(Choices: btrfs, ext2, ext3, ext4, ext4dev,f2fs, lvm, ocfs2, reiserfs, xfs, vfat, swap)
     dev :选择修改的硬盘文件
 
-- #### 12.mount
+- #### 12.mount:
   ```
   - name: Mount /dev/vdb1 to /data
   mount:
@@ -233,4 +233,40 @@ and removed 等效 表示删除安装包
   state:      present挂载，absent解除挂载
   opts:       挂载参数( 如 ro,noauto)
 
+  - #### 13.authorized_key:
+```
+- name: Copy authorized key to glops home directory
+  authorized_key:
+    user: glops
+    path: /home/glops/.ssh/authorized_keys
+    state: present
+    key: "{{ lookup('file','glops_id_rsa.pub') }}"
+    ```
+    新增公钥内容到服务器用户家目录的.ssh目录的authorized_keys文件 没有则创建authorized_keys文件 state: (1) present 添加 (2) absent 删除
+```
+* 例子： 创建ops用户，赋予sudo权限。并免登录。  
+```
+---
+- hosts: nodes
+  remote_user: root
+  tasks:
+   - name: Add the user 'ops' with a specific uid 
+     user:
+      name: ops
+      comment: ops
+      uid: 1002
+
+   - name: Copy authorized key to ops home directory
+     authorized_key:
+       user: ops
+       state: present
+       key: "{{ lookup('file','/home/ops/.ssh/id_rsa.pub') }}"
   
+   - name: Create Sudoers.d ops files
+     template:
+       src: sudoers.j2
+       dest: "/etc/sudoers.d/{{ item }}"
+     with_items:
+     - "ops"
+
+```
