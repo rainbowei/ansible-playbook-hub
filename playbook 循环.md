@@ -44,7 +44,18 @@ ansible playbook循环主要是为了解决重复使用task。比如批量安装
       state: installed 
     with_items:
         -  [  kubelet-1.15.0,kubeadm-1.15.0 ]
-        -  [ kubectl-1.15.0 ]
+        -  [ kubectl-1.15.0 ]        
+```
+等效于：
+```
+ - name: install kubeadm，kubelet and kubectl
+    yum:
+      name: "{{item}}"
+      state: installed 
+    with_flattened:
+        -  [  kubelet-1.15.0,kubeadm-1.15.0 ]
+        -  [ kubectl-1.15.0 ]   
+
 ```
 当with _items为多个列表的时候（这时候也可以用关键字with_flattened，意思是一样的），这会以此循环输出每个列表的值。因此item的值分别为kubelet-1.15.0，kubeadm-1.15.0， kubectl-1.15.0 。和单个列表没什么区别。可以看结果```：changed: [10.2.1.196] => (item=[u'wget', u'vim', u'lrzsz'])```
 
@@ -60,7 +71,7 @@ ansible playbook循环主要是为了解决重复使用task。比如批量安装
        - {src: "/opt/docker-ce.repo", dest: "/etc/yum.repos.d/docker-ce.repo" }
        - {src: "/opt/kubernetes.repo", dest: "/etc/yum.repos.d/kubernetes.repo" }
  ```
-* with_items 多列表循环：
+* with_list 多列表循环：
   
 当使用with_items时，且为多个列表时，则会以此循环每个列表内的值。详见例3最后等效于。item会循环3次，每个值依次为，kubelet-1.15.0，kubeadm-1.15.0 ， kubectl-1.15.0 。如果想每次循环整个列表作为整体。则使用with_list.
 ```
@@ -79,8 +90,41 @@ ansible playbook循环主要是为了解决重复使用task。比如批量安装
 则输出结果为：```changed: [10.2.1.196] => (item=[u'wget', u'vim'])
 changed: [10.2.1.196] => (item=[u'lrzsz'])```
 
+* with_together 对齐合并：
+```
+---
+- hosts: node1
+  remote_user: root
+  tasks:
+    - name: install kubeadm，kubelet and kubectl
+      debug:
+        msg: "{{ item }}"
+      with_together:
+         - [ 1,2,3 ]
+         - [ a,b,c]
 
+```
 
+  结果是：1->a,2->b,3-C
+  ```
+  ok: [10.2.1.196] => (item=[1, u'a']) => {
+    "msg": [
+        1, 
+        "a"
+    ]
+}
+ok: [10.2.1.196] => (item=[2, u'b']) => {
+    "msg": [
+        2, 
+        "b"
+    ]
+}
+ok: [10.2.1.196] => (item=[3, u'c']) => {
+    "msg": [
+        3, 
+        "c"
+    ]
+}
 
-
-  
+  ```
+  如果列表的数目不通，这没有匹配到的输出为null。 例如列表为[1,2] [a,b,c,] 这结果为1->a,2->b,null->c .同理如果列表为[1,2,3] [a,b]则输出结果为[1,a] [2,b] [3,null]
