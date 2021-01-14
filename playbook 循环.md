@@ -46,7 +46,7 @@ ansible playbook循环主要是为了解决重复使用task。比如批量安装
         -  [  kubelet-1.15.0,kubeadm-1.15.0 ]
         -  [ kubectl-1.15.0 ]
 ```
-当with _items为多个列表的时候，这会以此循环输出每个列表的值。因此item的值分别为kubelet-1.15.0，kubeadm-1.15.0， kubectl-1.15.0 。和单个列表没什么区别。可以看结果```：changed: [10.2.1.196] => (item=[u'wget', u'vim', u'lrzsz'])```
+当with _items为多个列表的时候（这时候也可以用关键字with_flattened，意思是一样的），这会以此循环输出每个列表的值。因此item的值分别为kubelet-1.15.0，kubeadm-1.15.0， kubectl-1.15.0 。和单个列表没什么区别。可以看结果```：changed: [10.2.1.196] => (item=[u'wget', u'vim', u'lrzsz'])```
 
 
   3. 例：通过字典的方式，批量copy文件
