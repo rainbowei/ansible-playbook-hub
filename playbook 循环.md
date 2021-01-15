@@ -128,3 +128,29 @@ ok: [10.2.1.196] => (item=[3, u'c']) => {
 
   ```
   如果列表的数目不通，这没有匹配到的输出为null。 例如列表为[1,2] [a,b,c,] 这结果为1->a,2->b,null->c .同理如果列表为[1,2,3] [a,b]则输出结果为[1,a] [2,b] [3,null]
+
+
+* with_cartesian 与with_nested：
+如果想创建用拥有相同子目录的文件，例如创建目录：/data1/mysql1  /data1/mysql2  /data2/mysql1 /   /data2/mysql2.目录 data1和data2下用友想想他的目录mysql1和mysql2.则可以用到with_cartesian
+- name: Create /etc/docker directory 
+  file:
+    path: /{{ item.0 }}/{{item.1}}
+    state: directory
+    mode: "0755"
+ with_nested: 
+   - [ data1,data2 ]
+   - [ mysql1,mysql2 ]
+
+item输出结果为：
+```
+changed: [10.2.1.196] => (item=[u'data1', u'mysql1'])
+changed: [10.2.1.196] => (item=[u'data1', u'mysql2'])
+changed: [10.2.1.196] => (item=[u'data2', u'mysql1'])
+changed: [10.2.1.196] => (item=[u'data2', u'mysql2'])
+
+```
+从输出信息可以看出，第一个小列表中的每个元素与第二个小列表中的每个元素都"两两组合在了一起"，如下图所示:
+![avatar](./images/01.png)
+
+
+
