@@ -1,0 +1,6 @@
+--- 
+- hosts: node2
+  roles:
+    - init_server
+      
+ 
