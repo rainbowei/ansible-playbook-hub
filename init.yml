@@ -2,5 +2,14 @@
 - hosts: node2
   roles:
     - init_server
-      
- 
+  vars_prompt:
+    - name: user 
+      prompt: "please input your name of add"  
+      private: no  #有回显
+    - name: passwd 
+      prompt: "please input your passwd of user"   
+      private: no  # 有回显
+      encrypt: "sha512_crypt"  # 密码加密
+      confirm: yes # ‘密码输入2次’
+      salt_size: 7
+  
