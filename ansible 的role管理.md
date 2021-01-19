@@ -49,8 +49,29 @@ nginx
 └── vars
     └── main.yml
 ```
-## 2. role举个小栗子：
+## 2. site.yaml文件：
 
+我们可以在role目录的同级目录，建立site.yml(名字可以随便起)文件用来执行我们的role。这时候site.yml直接用相对目录即可例如：
+```
+[root@k8-master roles]# ls
+demorole  nginx  site.yml  testrole
+[root@k8-master roles]# cat site.yml 
+- hosts: node1
+  roles:
+   - nginx
+```
+配置文件中site.yml 定义的roles nginx和nginx角色目录同级的时候，可以用绝对目录。另外也可以把nginx角色目录放在 ~/.ansible/roles 目录下，这时候site.yml文件则可以放在任意目录。另外还可以用绝对路径，这时候site.yml也可以放在任何目录执行。例如：
+```
+- hosts: node1
+  roles:
+   - "/data/roles/nginx"
+```
+你也可修改ansible的配置文件，设置自己的角色搜索目录，编辑/etc/ansible/ansible.cfg配置文件，设置roles_path选项，此项默认是注释掉的，将注释符去掉，当你想要设置多个路径时，多个路径之间用冒号隔开，示例如下:
+```
+roles_path    = /etc/ansible/roles:/opt:/testdir
+```
+## 3 role变量优先级：
+/var/main.yml 文件中变量优先级是最高的。/defaults/main.yml 文件中变量优先级最低。另外site.yml中的变量是全局变量。
 
 
 
