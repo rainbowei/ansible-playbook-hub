@@ -270,3 +270,41 @@ and removed 等效 表示删除安装包
      with_items:
      - "ops
 ```
+- #### 14 blockinfile:
+* path参数 ：必须参数，指定要操作的文件。
+
+* block参数 ：此参数用于指定我们想要操作的那”一段文本”，此参数有一个别名叫”content”，使用content或block的作用是相同的。
+
+* marker参数 ：假如我们想要在指定文件中插入一段文本，ansible会自动为这段文本添加两个标记，一个开始标记，一个结束标记，默认情况下，开始标记为# BEGIN ANSIBLE MANAGED BLOCK，结束标记为# END ANSIBLE MANAGED BLOCK，我们可以使用marker参数自定义”标记”。比如，marker=#{mark}test ，这样设置以后，开始标记变成了# BEGIN test，结束标记变成了# END test，没错，{mark}会自动被替换成开始标记和结束标记中的BEGIN和END，我们也可以插入很多段文本，为不同的段落添加不同的标记，下次通过对应的标记即可找到对应的段落。
+
+* state参数 : state参数有两个可选值，present与absent，默认情况下，我们会将指定的一段文本”插入”到文件中，如果对应的文件中已经存在对应标记的文本，默认会更新对应段落，在执行插入操作或更新操作时，state的值为present，默认值就是present，如果对应的文件中已经存在对应标记的文本并且将state的值设置为absent，则表示从文件中删除对应标记的段落。
+
+* insertafter参数 ：在插入一段文本时，默认会在文件的末尾插入文本，如果你想要将文本插入在某一行的后面，可以使用此参数指定对应的行，也可以使用正则表达式(python正则)，表示将文本插入在符合正则表达式的行的后面。如果有多行文本都能够匹配对应的正则表达式，则以最后一个满足正则的行为准，此参数的值还可以设置为EOF，表示将文本插入到文档末尾。
+
+* insertbefore参数 ：在插入一段文本时，默认会在文件的末尾插入文本，如果你想要将文本插入在某一行的前面，可以使用此参数指定对应的行，也可以使用正则表达式(python正则)，表示将文本插入在符合正则表达式的行的前面。如果有多行文本都能够匹配对应的正则表达式，则以最后一个满足正则的行为准，此参数的值还可以设置为BOF，表示将文本插入到文档开头。
+
+* backup参数 ：是否在修改文件之前对文件进行备份。
+
+* create参数 ：当要操作的文件并不存在时，是否创建对应的文件
+
+ - #### 15 unarchive模块:
+1、将ansible主机上的压缩包在本地解压缩后传到远程主机上，这种情况下，copy=yes.   本地解压缩,解压缩位置不是默认的目录,没找到或传完删了后传到远程主机
+2、将远程主机上的某个压缩包解压缩到指定路径下。这种情况下，需要设置copy=no   远程主机上面的操作,不涉及ansible服务端
+```
+- name: 解压jdk文件到服务器
+  unarchive:
+   src: "https://www.iworkh.com/download/share/99-%E8%BD%AF%E4%BB%B6/04-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/jdk/jdk8u251/jdk-8u251-linux-x64.tar.gz"
+   dest: '{{jdk_home}}'
+   remote_src: yes
+   mode: 0755
+```
+当src路径为远程http路径时，需要设置remote_src: yes 如果是ansible server宿主机本地路径则需要设置cope: yes 默认值是yes。
+参数：
+
+* copy：默认为yes，当copy=yes，那么拷贝的文件是从ansible主机复制到远程主机上的，如果设置为copy=no，那么会在远程主机上寻找src源文件
+
+* src：源路径，可以是ansible主机上的路径，也可以是远程主机上的路径，如果是远程主机上的路径，则需要设置copy=no
+* dest：远程主机上的目标路径
+* remote_src:设置为yes指示已存档文件已在远程系统上，而不是Ansible控制器的本地文件。
+* mode：设置解压缩后的文件权限
+

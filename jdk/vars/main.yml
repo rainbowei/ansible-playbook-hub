@@ -1,0 +1,4 @@
+---
+# vars file for jdk
+jdk_home: /usr/local/
+jdk_version: jdk1.8.0_251

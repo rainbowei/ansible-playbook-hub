@@ -1,0 +1,22 @@
+---
+# tasks file for jdk
+- name: 解压jdk文件到服务器
+  unarchive:
+  #  src: "https://www.iworkh.com/download/share/99-%E8%BD%AF%E4%BB%B6/04-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/jdk/jdk8u251/jdk-8u251-linux-x64.tar.gz"
+   src: jdk1.8.0_251.tar.gz
+   dest: '{{jdk_home}}'
+  #  remote_src: yes
+   mode: 0755
+
+- name: 设置环境变量
+  blockinfile:
+   path: "/etc/profile"
+   block: |
+    JAVA_HOME='{{jdk_home}}/{{jdk_version}}'
+    CLASSPATH=.:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar 
+    PATH=$JAVA_HOME/bin:$HOME/bin:$HOME/.local/bin:$PATH
+   marker: "#{mark} jdk env" 
+   state: present
+
+- name: 使环境变量生效
+  shell: source /etc/profile
