@@ -271,6 +271,15 @@ and removed 等效 表示删除安装包
      - "ops
 ```
 - #### 14 blockinfile:
+```
+- name: sudoers 修改sudo文件
+  blockinfile: 
+    path: /etc/sudoers
+    block: |
+      {{user}} ALL=(ALL) NOPASSWD:ALL
+    marker: "#{mark} add {{user}} in /etc/sudoers"  
+    state: present
+```
 * path参数 ：必须参数，指定要操作的文件。
 
 * block参数 ：此参数用于指定我们想要操作的那”一段文本”，此参数有一个别名叫”content”，使用content或block的作用是相同的。
